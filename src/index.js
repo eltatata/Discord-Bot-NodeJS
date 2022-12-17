@@ -1,3 +1,4 @@
+require("./commands/slashCommands")
 const dotenv = require("dotenv");
 dotenv.config();
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -15,19 +16,6 @@ const youtube = google.youtube({ version: 'v3', auth: process.env.API_KEY });
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
-
-	client.application.commands.set([
-		{
-			name: "ping",
-			description: "Pong",
-			options: []
-		},
-		{
-			name: "yt",
-			description: "Search TY",
-			options: []
-		}
-	])
 });
 
 client.on('interactionCreate', async interaction => {
@@ -35,6 +23,24 @@ client.on('interactionCreate', async interaction => {
 
 	if (interaction.commandName === 'ping') {
 		await interaction.reply('Pong!');
+	}
+
+	if (interaction.commandName === 'youtube') {
+		const search = interaction.options.get("name").value
+
+		youtube.search.list({
+			part: 'id,snippet',
+			type: 'video',
+			q: search
+		}, async (err, res) => {
+			if (err) return console.error(err);
+
+			// aquí puedes procesar los resultados de la búsqueda
+			const video = res.data.items[0];
+			const videoUrl = `https://www.youtube.com/watch?v=${video.id.videoId}`;
+
+			await interaction.reply(videoUrl);
+		});
 	}
 });
 
