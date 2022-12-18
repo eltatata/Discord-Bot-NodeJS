@@ -1,4 +1,3 @@
-require("./commands/slashCommands")
 const dotenv = require("dotenv");
 dotenv.config();
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -41,6 +40,13 @@ client.on('interactionCreate', async interaction => {
 
 			await interaction.reply(videoUrl);
 		});
+	}
+
+	if (interaction.commandName == "order") {
+		const food = interaction.options.get("food").value;
+		const drink = interaction.options.get("drink").value;
+
+		await interaction.reply(`Your order is: ${food} and ${drink}`);
 	}
 });
 
